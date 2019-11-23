@@ -7,11 +7,11 @@ You need to install [LeoECS](https://github.com/Leopotam/ecs) and [LeoECS Unity 
 ## Installation as unity module
 This repository can be installed as unity module directly from git url. In this way new line should be added to `Packages/manifest.json`:
 ```
-"com.leopotam.ecs": "https://github.com/Leopotam/ecs.git",
+"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",
 ```
 By default last released version will be used. If you need trunk / developing version then `develop` name of branch should be added after hash:
 ```
-"com.leopotam.ecs": "https://github.com/Leopotam/ecs.git#develop",
+"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git#develop",
 ```
 
 ## Content
