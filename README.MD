@@ -12,8 +12,9 @@ It contains:
 - Interface `ICanCopyData`.\
 It's mandatory interface to component in `ComponentWrapper`, you need to copy every field to other instance to proper work.
 - ECS Component `UnityObject` to let you refer to GameObject of HybridEntity.
-- ECS Component `Update<>` to let you know when component changed from Inspector. You also can use it to simple reactive system.
-- Entity Extension `MarkAsUpdated<>`. It will simply add `Update<>` component to entity.
+- ECS Component `Updated<>` to let you know when component changed from Inspector.\
+You also can use it to reactive-like systems. Just make `EcsFilter<Updated<Component>>` and fire event with...
+- Entity Extension `MarkAsUpdated<>`. It will simply add `Updated<>` component to entity.
 - Abstract mono behaviour `BaseStartup`.\
 You can inherit it to get simple interface for working in Unity.
 ```
