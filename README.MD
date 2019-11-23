@@ -4,7 +4,17 @@ Hybrid ECS let you to connect scenes and prefabs of Unity with ECS in easy way. 
 
 You need to install [LeoECS](https://github.com/Leopotam/ecs) and [LeoECS Unity Integration](https://github.com/Leopotam/ecs-unityintegration) to proper work.
 
-It contains:
+## Installation as unity module
+This repository can be installed as unity module directly from git url. In this way new line should be added to `Packages/manifest.json`:
+```
+"com.leopotam.ecs": "https://github.com/Leopotam/ecs.git",
+```
+By default last released version will be used. If you need trunk / developing version then `develop` name of branch should be added after hash:
+```
+"com.leopotam.ecs": "https://github.com/Leopotam/ecs.git#develop",
+```
+
+## Content
 - `HybridEntity` to represent Entity on scene/prefab.
 - ECS One Frame Component `NewHybridEntity` to let you know about any new `HybridEntity`.
 - `ComponentWrapper` to add/remove ECS components to HybridEntity. You also can override some methods.
