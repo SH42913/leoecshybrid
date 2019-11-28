@@ -3,33 +3,25 @@ using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public class HybridEntity : MonoBehaviour {
+		public bool createEntityOnEnable = true;
 		public bool checkChildrenForComponents = true;
+
 		public bool worldIsAlive => startup && startup.worldIsAlive;
+		private BaseStartup startup;
 
 		public EcsEntity entity => entityValue;
+		public bool entityIsAlive => !entityValue.IsNull() && entityValue.IsAlive();
 		private EcsEntity entityValue;
-
-		public bool isAlive => !entityValue.IsNull() && entityValue.IsAlive();
-
-		private BaseStartup startup;
 
 		private void Awake() {
 			startup = GetStartup();
 		}
 
 		protected virtual void OnEnable() {
-			#if DEBUG
-			startup = GetStartup();
-			if (!startup) {
-				throw new Exception($"There is no {nameof(BaseStartup)} on parents!");
-			}
-			#endif
+			if (!createEntityOnEnable) return;
 
 			entityValue = CreateEntity();
-			AddComponentsFromGameObject(gameObject);
-
-			if (!checkChildrenForComponents) return;
-			AddComponentsFromChildren();
+			FillEntityWithComponents();
 		}
 
 		protected virtual void OnDisable() {
@@ -38,6 +30,30 @@ namespace Leopotam.Ecs.Hybrid {
 
 		protected virtual BaseStartup GetStartup() {
 			return GetComponentInParent<BaseStartup>();
+		}
+
+		protected virtual EcsEntity CreateEntity() {
+			#if DEBUG
+			startup = GetStartup();
+			if (!startup) {
+				throw new Exception($"There is no {nameof(BaseStartup)} on parents!");
+			} else if (!startup.worldIsAlive) {
+				throw new Exception($"{startup.GetType().Name} is not init!");
+			} else if (!entityValue.IsNull()) {
+				throw new Exception("Entity already created!");
+			}
+			#endif
+
+			var newEntity = startup.world.NewEntityWith(out UnityObject unityObject, out NewHybridEntityEvent _);
+			unityObject.gameObject = gameObject;
+			return newEntity;
+		}
+
+		protected void FillEntityWithComponents() {
+			AddComponentsFromGameObject(gameObject);
+
+			if (!checkChildrenForComponents) return;
+			AddComponentsFromChildren();
 		}
 
 		protected virtual void AddComponentsFromGameObject(GameObject go) {
@@ -55,28 +71,11 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected virtual void DestroyEntity() {
-			if (startup.world != null && entityValue.IsAlive()) {
+			if (worldIsAlive && entityIsAlive) {
 				entityValue.Destroy();
 			}
 
 			entityValue = EcsEntity.Null;
-		}
-
-		protected virtual EcsEntity CreateEntity() {
-			#if DEBUG
-			if (!startup) {
-				throw new Exception("Startup is not found!");
-			} else if (!startup.worldIsAlive) {
-				throw new Exception("Startup is not init!");
-			} else if (!entityValue.IsNull()) {
-				throw new Exception("Entity already created!");
-			}
-			#endif
-
-			var newEntity = startup.world.NewEntityWith(out UnityObject unityObject, out NewHybridEntity _);
-			unityObject.gameObject = gameObject;
-
-			return newEntity;
 		}
 	}
 }
