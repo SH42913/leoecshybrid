@@ -3,17 +3,28 @@ using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public class HybridEntity : MonoBehaviour {
-		[SerializeField] private BaseStartup startup = null;
-		public bool worldIsAlive => startup && startup.worldIsAlive;
-
 		public bool checkChildrenForComponents = true;
+		public bool worldIsAlive => startup && startup.worldIsAlive;
 
 		public EcsEntity entity => entityValue;
 		private EcsEntity entityValue;
 
 		public bool isAlive => !entityValue.IsNull() && entityValue.IsAlive();
 
+		private BaseStartup startup;
+
+		private void Awake() {
+			startup = GetStartup();
+		}
+
 		protected virtual void OnEnable() {
+			#if DEBUG
+			startup = GetStartup();
+			if (!startup) {
+				throw new Exception($"There is no {nameof(BaseStartup)} on parents!");
+			}
+			#endif
+
 			entityValue = CreateEntity();
 			AddComponentsFromGameObject(gameObject);
 
@@ -23,6 +34,10 @@ namespace Leopotam.Ecs.Hybrid {
 
 		protected virtual void OnDisable() {
 			DestroyEntity();
+		}
+
+		protected virtual BaseStartup GetStartup() {
+			return GetComponentInParent<BaseStartup>();
 		}
 
 		protected virtual void AddComponentsFromGameObject(GameObject go) {
