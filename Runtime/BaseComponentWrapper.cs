@@ -25,6 +25,10 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected void OnEnable() {
+			#if UNITY_EDITOR
+			ValidateComponentValues();
+			#endif
+
 			if (!hybridEntity.worldIsAlive || !hybridEntity.isAlive || connected) return;
 
 			var entity = hybridEntity.entity;
@@ -38,6 +42,7 @@ namespace Leopotam.Ecs.Hybrid {
 			RemoveFromEntity(ref entity);
 		}
 
+		protected virtual void ValidateComponentValues() { }
 		public abstract void AddToEntity(ref EcsEntity entity);
 		public abstract void RemoveFromEntity(ref EcsEntity entity);
 		public abstract void MarkAsUpdated();

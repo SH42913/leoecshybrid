@@ -2,7 +2,7 @@
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class ComponentWrapper<T> : BaseComponentWrapper where T : class, ICanCopyData<T>, new() {
-		[SerializeField] [WrappedComponent] private T value;
+		[SerializeField] [WrappedComponent] private T value = new T();
 		private T startValue;
 
 		public T component => value;
