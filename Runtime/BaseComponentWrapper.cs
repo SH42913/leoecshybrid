@@ -12,7 +12,7 @@ namespace Leopotam.Ecs.Hybrid {
 			get {
 				if (hybridEntityValue) return hybridEntityValue;
 
-				hybridEntityValue = GetComponentInParent<HybridEntity>();
+				hybridEntityValue = GetComponent<HybridEntity>() ?? transform.parent.GetComponent<HybridEntity>();
 
 				#if DEBUG
 				if (!hybridEntityValue) {
