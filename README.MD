@@ -16,7 +16,7 @@ By default last released version will be used. If you need trunk / developing ve
 
 ## Content
 - `HybridEntity` to represent Entity on scene/prefab.
-- ECS One Frame Component `NewHybridEntity` to let you know about any new `HybridEntity`.
+- ECS One Frame Component `NewHybridEntityEvent` to let you know about any new `HybridEntity`.
 - `ComponentWrapper` to add/remove ECS components to HybridEntity. You also can override some methods.
 - Inspector to `ComponentWrapper`. It will warning you when something went wrong.
 - Interface `ICanCopyData`.\
@@ -25,23 +25,23 @@ It's mandatory interface to component in `ComponentWrapper`, you need to copy ev
 - ECS Component `Updated<>` to let you know when component changed from Inspector.\
 You also can use it to reactive-like systems. Just make `EcsFilter<Updated<Component>>` and fire event with...
 - Entity Extension `MarkAsUpdated<>`. It will simply add `Updated<>` component to entity.
-- Abstract mono behaviour `BaseStartup`.\
-You can inherit it to get simple interface for working in Unity.
+- Abstract mono behaviour `BaseStartup`. You can inherit it to get simple interface for working in Unity. All ECS One Frame components will remove after `lateUpdateSystems` processing.
 ```
-    internal sealed class $STARTUP$ : BaseStartup 
-    {
-		private void OnEnable() {
-			CreateWorld();
-			CreateSystems();
-			
-			//fixedUpdateSystems.Add(new FixedUpdateSystem());
-			//updateSystems.Add(new UpdateSystem());
-			//gizmosSystems.Add(new GizmosSystem());
+internal sealed class $STARTUP$ : BaseStartup 
+{
+    private void OnEnable() {
+        CreateWorld();
+        CreateSystems();
+        
+        //fixedUpdateSystems.Add(new FixedUpdateSystem());
+        //updateSystems.Add(new UpdateSystem());
+        //lateUpdateSystems.Add(new LateUpdateSystem());
+        //gizmosSystems.Add(new GizmosSystem());
 
-			//updateSystems.Inject(something);
-			FinalizeSystems();
-		}
-	}
+        //updateSystems.Inject(something);
+        FinalizeSystems();
+    }
+}
 ```
 
-I also very recommend think "One startup - one scene" and decomposite your game to scenes!
+I also very recommend to think "One startup - one scene" and to decompose your game to scenes!
