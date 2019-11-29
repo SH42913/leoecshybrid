@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class BaseStartup : MonoBehaviour {
@@ -6,8 +7,9 @@ namespace Leopotam.Ecs.Hybrid {
 		public bool worldIsAlive => world != null;
 		public bool isRunning = false;
 
-		protected EcsSystems updateSystems;
 		protected EcsSystems fixedUpdateSystems;
+		protected EcsSystems updateSystems;
+		protected EcsSystems lateUpdateSystems;
 
 		#if UNITY_EDITOR
 		protected EcsSystems gizmosSystems;
@@ -22,20 +24,23 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected virtual void CreateSystems() {
-			updateSystems = new EcsSystems(world, "UPDATE");
 			fixedUpdateSystems = new EcsSystems(world, "FIXED UPDATE");
+			updateSystems = new EcsSystems(world, "UPDATE");
+			lateUpdateSystems = new EcsSystems(world, "LATE UPDATE");
 
 			#if UNITY_EDITOR
 			gizmosSystems = new EcsSystems(world, "GIZMOS");
-			UnityIntegration.EcsSystemsObserver.Create(updateSystems);
 			UnityIntegration.EcsSystemsObserver.Create(fixedUpdateSystems);
+			UnityIntegration.EcsSystemsObserver.Create(updateSystems);
+			UnityIntegration.EcsSystemsObserver.Create(lateUpdateSystems);
 			UnityIntegration.EcsSystemsObserver.Create(gizmosSystems);
 			#endif
 		}
 
 		protected virtual void FinalizeSystems() {
-			updateSystems.Init();
 			fixedUpdateSystems.Init();
+			updateSystems.Init();
+			lateUpdateSystems.Init();
 
 			#if UNITY_EDITOR
 			gizmosSystems.Init();
@@ -51,16 +56,23 @@ namespace Leopotam.Ecs.Hybrid {
 
 		private void Update() {
 			if (!isRunning) return;
-
 			updateSystems.Run();
+		}
+
+		private void LateUpdate() {
+			if (!isRunning) return;
+
+			lateUpdateSystems.Run();
 			world.EndFrame();
 		}
 
 		private void OnDisable() {
-			updateSystems.Destroy();
-			updateSystems = null;
 			fixedUpdateSystems.Destroy();
 			fixedUpdateSystems = null;
+			updateSystems.Destroy();
+			updateSystems = null;
+			lateUpdateSystems.Destroy();
+			lateUpdateSystems = null;
 
 			#if UNITY_EDITOR
 			gizmosSystems.Destroy();
