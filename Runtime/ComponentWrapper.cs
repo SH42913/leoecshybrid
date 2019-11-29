@@ -28,10 +28,9 @@ namespace Leopotam.Ecs.Hybrid {
 			connected = false;
 		}
 
-		public override void MarkAsUpdated() {
-			if (startValue == null || !componentExists) return;
-
-			hybridEntity.entity.MarkAsUpdated<T>();
+		protected override void AddUpdatedComponent(EcsEntity entity) {
+			if (startValue == null) return;
+			entity.MarkAsUpdated<T>();
 		}
 	}
 }

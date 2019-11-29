@@ -45,6 +45,13 @@ namespace Leopotam.Ecs.Hybrid {
 		protected virtual void ValidateComponentValues() { }
 		public abstract void AddToEntity(ref EcsEntity entity);
 		public abstract void RemoveFromEntity(ref EcsEntity entity);
-		public abstract void MarkAsUpdated();
+
+		public void MarkAsUpdated() {
+			if (!componentExists) return;
+
+			AddUpdatedComponent(hybridEntity.entity);
+		}
+
+		protected abstract void AddUpdatedComponent(EcsEntity entity);
 	}
 }
