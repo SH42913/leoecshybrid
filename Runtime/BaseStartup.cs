@@ -38,6 +38,14 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected virtual void FinalizeSystems() {
+			fixedUpdateSystems.ProcessInjects();
+			updateSystems.ProcessInjects();
+			lateUpdateSystems.ProcessInjects();
+
+			#if UNITY_EDITOR
+			gizmosSystems.ProcessInjects();
+			#endif
+
 			fixedUpdateSystems.Init();
 			updateSystems.Init();
 			lateUpdateSystems.Init();
