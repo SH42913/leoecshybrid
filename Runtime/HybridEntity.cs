@@ -28,6 +28,17 @@ namespace Leopotam.Ecs.Hybrid {
 			DestroyEntity();
 		}
 
+		public void AttachToEntity(EcsEntity parentEntity) {
+			#if DEBUG
+			if (!entity.IsNull()) {
+				throw new Exception($"{nameof(HybridEntity)} already attached to {nameof(EcsEntity)}");
+			}
+			#endif
+
+			entityValue = parentEntity;
+			FillEntityWithComponents();
+		}
+
 		protected virtual BaseStartup GetStartup() {
 			return GetComponentInParent<BaseStartup>();
 		}
