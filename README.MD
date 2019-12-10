@@ -4,15 +4,23 @@ Hybrid ECS let you to connect scenes and prefabs of Unity with ECS in easy way. 
 
 You need to install [LeoECS](https://github.com/Leopotam/ecs) and [LeoECS Unity Integration](https://github.com/Leopotam/ecs-unityintegration) to proper work.
 
-## Installation as unity module
-This repository can be installed as unity module directly from git url. In this way new line should be added to `Packages/manifest.json`:
+## Installation into Unity project
+1. Read the instructions from the official Unity documentation: https://docs.unity3d.com/Manual/upm-dependencies.html#Git
+2. Open up *manifest.json* inside the *Packages* directory in your Unity project using a text editor.
+3. Under the dependencies section of this file, you should add the following line at the top:\
+```"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",```\
+It should be like this:
 ```
-"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",
+{
+  "dependencies": {
+    "com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",
+    ...
+  }
+}
 ```
-By default last released version will be used. If you need trunk / developing version then `develop` name of branch should be added after hash:
-```
-"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git#develop",
-```
+Since Unity 2019.3 you can also add the package in Package Manager UI in Unity using the link to repo.
+4. Success! Start up Unity with your Unity project and you will see Leo ECS Hybrid in the Unity Package Manager.
+5. If you want to update package to latest version, you should to remove *"lock"* section in *manifest.json*
 
 ## Content
 - `HybridEntity` to represent Entity on scene/prefab.
