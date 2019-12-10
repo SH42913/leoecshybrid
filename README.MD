@@ -7,9 +7,8 @@ You need to install [LeoECS](https://github.com/Leopotam/ecs) and [LeoECS Unity 
 ## Installation into Unity project
 1. Read the instructions from the official Unity documentation: https://docs.unity3d.com/Manual/upm-dependencies.html#Git
 2. Open up *manifest.json* inside the *Packages* directory in your Unity project using a text editor.
-3. Under the dependencies section of this file, you should add the following line at the top:\
-```"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",```\
-It should be like this:
+3. Under the dependencies section of this file, you should add the following line at the top: ```"com.leopotam.ecs-hybrid": "https://github.com/SH42913/leoecshybrid.git",```
+4. It should be like this:
 ```
 {
   "dependencies": {
@@ -18,9 +17,9 @@ It should be like this:
   }
 }
 ```
-Since Unity 2019.3 you can also add the package in Package Manager UI in Unity using the link to repo.
-4. Success! Start up Unity with your Unity project and you will see Leo ECS Hybrid in the Unity Package Manager.
-5. If you want to update package to latest version, you should to remove *"lock"* section in *manifest.json*
+5. Success! Start up Unity with your Unity project and you will see Leo ECS Hybrid in the Unity Package Manager.
+6. If you want to update package to latest version, you should to remove *"lock"* section in *manifest.json*
+7. Since Unity 2019.3 you can also add the package in Package Manager UI in Unity using the link to repo.
 
 ## Content
 - `HybridEntity` to represent Entity on scene/prefab.
