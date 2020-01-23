@@ -2,15 +2,14 @@
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class ComponentWrapper<T> : BaseComponentWrapper where T : class, ICanCopyData<T>, new() {
+		public T component => value;
 		[SerializeField] [WrappedComponent] private T value = new T();
 		private T startValue;
-
-		public T component => value;
 
 		public override void AddToEntity(ref EcsEntity entity) {
 			startValue = value;
 			value = entity.Set<T>();
-			connected = true;
+			connectedToEntity = true;
 
 			if (startValue != null) {
 				startValue.Copy(value);
@@ -25,7 +24,7 @@ namespace Leopotam.Ecs.Hybrid {
 			}
 
 			entity.Unset<T>();
-			connected = false;
+			connectedToEntity = false;
 		}
 
 		protected override void AddUpdatedComponent(EcsEntity entity) {

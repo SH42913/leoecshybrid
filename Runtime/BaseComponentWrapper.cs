@@ -1,45 +1,28 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class BaseComponentWrapper : MonoBehaviour {
-		protected bool connected;
-		protected bool componentExists => hybridEntity && hybridEntity.worldIsAlive && hybridEntity.isAlive && connected;
+		protected bool componentExists => hybridEntity != null && hybridEntity.isAlive && connectedToEntity;
+		protected bool connectedToEntity;
 
+		protected HybridEntity hybridEntity => hybridEntityValue == null ? hybridEntityValue : DetectHybridEntity();
 		private HybridEntity hybridEntityValue;
-
-		protected HybridEntity hybridEntity {
-			get {
-				if (hybridEntityValue) return hybridEntityValue;
-
-				hybridEntityValue = GetComponent<HybridEntity>() ?? transform.parent.GetComponent<HybridEntity>();
-
-				#if DEBUG
-				if (!hybridEntityValue) {
-					throw new Exception($"There is no any {nameof(HybridEntity)}!");
-				}
-				#endif
-
-				return hybridEntityValue;
-			}
-		}
 
 		protected void OnEnable() {
 			#if UNITY_EDITOR
 			ValidateComponentValues();
 			#endif
 
-			if (!hybridEntity.isAlive || connectedToEntity) return;
-
-			var entity = hybridEntity.entity;
-			AddToEntity(ref entity);
+			if (hybridEntity.isAlive && !connectedToEntity) {
+				AddToEntity(ref hybridEntity.entity);
+			}
 		}
 
 		protected void OnDisable() {
-			if (!componentExists) return;
-
-			var entity = hybridEntity.entity;
-			RemoveFromEntity(ref entity);
+			if (componentExists) {
+				RemoveFromEntity(ref hybridEntity.entity);
+			}
 		}
 
 		protected virtual void ValidateComponentValues() { }
@@ -53,5 +36,17 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected abstract void AddUpdatedComponent(EcsEntity entity);
+
+		private HybridEntity DetectHybridEntity() {
+			hybridEntityValue = GetComponent<HybridEntity>() ?? transform.parent.GetComponent<HybridEntity>();
+
+			#if DEBUG
+			if (hybridEntityValue == null || !hybridEntityValue.checkChildrenForComponents) {
+				throw new Exception($"There is no any {nameof(HybridEntity)}!");
+			}
+			#endif
+
+			return hybridEntityValue;
+		}
 	}
 }
