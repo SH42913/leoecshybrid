@@ -10,6 +10,29 @@ namespace Leopotam.Ecs.Hybrid {
 			startValue = value;
 			value = entity.Set<T>();
 			connectedToEntity = true;
+			startValue?.Copy(value);
+		}
+
+		public override void RemoveFromEntity(ref EcsEntity entity) {
+			if (startValue != null) {
+				value.Copy(startValue);
+				value = startValue;
+			}
+
+			entity.Unset<T>();
+			connectedToEntity = false;
+		}
+	}
+
+	public abstract class ReactiveComponentWrapper<T> : BaseReactiveComponentWrapper where T : class, ICanCopyData<T>, new() {
+		public T component => value;
+		[SerializeField] [WrappedComponent] private T value = new T();
+		private T startValue;
+
+		public override void AddToEntity(ref EcsEntity entity) {
+			startValue = value;
+			value = entity.Set<T>();
+			connectedToEntity = true;
 
 			if (startValue != null) {
 				startValue.Copy(value);

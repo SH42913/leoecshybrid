@@ -8,16 +8,19 @@ namespace Leopotam.Ecs.Hybrid {
 		private const string componentValueName = "value";
 
 		protected Type componentType { get; private set; }
-
 		private BaseComponentWrapper wrapper;
+		private bool isReactive;
 		private SerializedProperty serializedData;
 		private bool notMarkedSerializable;
 		private bool multipleComponents;
 
 		protected virtual void OnEnable() {
 			wrapper = (BaseComponentWrapper)target;
+			isReactive = target is BaseReactiveComponentWrapper;
 			serializedData = serializedObject.FindProperty(componentValueName);
-			Undo.undoRedoPerformed += UndoRedoPerformed;
+			if (isReactive) {
+				Undo.undoRedoPerformed += ComponentUpdated;
+			}
 
 			var type = target.GetType();
 			multipleComponents = wrapper.GetComponents(type).Length > 1;
@@ -47,12 +50,14 @@ namespace Leopotam.Ecs.Hybrid {
 			DisplayComponent(serializedData);
 			if (!EditorGUI.EndChangeCheck()) return;
 
-			wrapper.MarkAsUpdated();
+			ComponentUpdated();
 			serializedObject.ApplyModifiedProperties();
 		}
 
-		private void UndoRedoPerformed() {
-			wrapper.MarkAsUpdated();
+		private void ComponentUpdated() {
+			if (!isReactive) return;
+			var reactiveWrapper = (BaseReactiveComponentWrapper)wrapper;
+			reactiveWrapper.MarkAsUpdated();
 		}
 
 		protected virtual void DisplayComponent(SerializedProperty property) {

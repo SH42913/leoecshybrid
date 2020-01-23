@@ -6,7 +6,7 @@ namespace Leopotam.Ecs.Hybrid {
 		protected bool componentExists => hybridEntity != null && hybridEntity.isAlive && connectedToEntity;
 		protected bool connectedToEntity;
 
-		protected HybridEntity hybridEntity => hybridEntityValue == null ? hybridEntityValue : DetectHybridEntity();
+		protected HybridEntity hybridEntity => hybridEntityValue != null ? hybridEntityValue : DetectHybridEntity();
 		private HybridEntity hybridEntityValue;
 
 		protected void OnEnable() {
@@ -29,24 +29,31 @@ namespace Leopotam.Ecs.Hybrid {
 		public abstract void AddToEntity(ref EcsEntity entity);
 		public abstract void RemoveFromEntity(ref EcsEntity entity);
 
-		public void MarkAsUpdated() {
-			if (!componentExists) return;
-
-			AddUpdatedComponent(hybridEntity.entity);
-		}
-
-		protected abstract void AddUpdatedComponent(EcsEntity entity);
-
 		private HybridEntity DetectHybridEntity() {
-			hybridEntityValue = GetComponent<HybridEntity>() ?? transform.parent.GetComponent<HybridEntity>();
+			var foundInParent = false;
+			hybridEntityValue = GetComponent<HybridEntity>();
+			if (hybridEntityValue == null && transform.parent != null) {
+				hybridEntityValue = transform.parent.GetComponent<HybridEntity>();
+				foundInParent = true;
+			}
 
 			#if DEBUG
-			if (hybridEntityValue == null || !hybridEntityValue.checkChildrenForComponents) {
+			if (hybridEntityValue == null || foundInParent && !hybridEntityValue.checkChildrenForComponents) {
 				throw new Exception($"There is no any {nameof(HybridEntity)}!");
 			}
 			#endif
 
 			return hybridEntityValue;
 		}
+	}
+
+	public abstract class BaseReactiveComponentWrapper : BaseComponentWrapper {
+		public void MarkAsUpdated() {
+			if (componentExists) {
+				AddUpdatedComponent(hybridEntity.entity);
+			}
+		}
+
+		protected abstract void AddUpdatedComponent(EcsEntity entity);
 	}
 }
