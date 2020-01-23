@@ -68,9 +68,7 @@ namespace Leopotam.Ecs.Hybrid {
 
 		private void LateUpdate() {
 			if (!isRunning) return;
-
 			lateUpdateSystems.Run();
-			world.EndFrame();
 		}
 
 		private void OnDisable() {
