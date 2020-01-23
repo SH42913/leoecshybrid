@@ -56,7 +56,7 @@ namespace Leopotam.Ecs.Hybrid {
 			#endif
 
 			var newEntity = startup.world.NewEntityWith(out UnityObject unityObject, out NewHybridEntityEvent _);
-			unityObject.gameObject = gameObject;
+			unityObject.transform = gameObject.transform;
 			return newEntity;
 		}
 
@@ -93,10 +93,10 @@ namespace Leopotam.Ecs.Hybrid {
 	public sealed class NewHybridEntityEvent : IEcsOneFrame { }
 
 	public sealed class UnityObject : IEcsAutoReset {
-		public GameObject gameObject;
+		public Transform transform;
 
 		public void Reset() {
-			gameObject = null;
+			transform = null;
 		}
 	}
 }
