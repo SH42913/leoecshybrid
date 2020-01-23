@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class BaseComponentWrapper : MonoBehaviour {
 		protected bool connected;
-		protected bool componentExists => hybridEntity && hybridEntity.worldIsAlive && hybridEntity.entityIsAlive && connected;
+		protected bool componentExists => hybridEntity && hybridEntity.worldIsAlive && hybridEntity.isAlive && connected;
 
 		private HybridEntity hybridEntityValue;
 
@@ -29,7 +29,7 @@ namespace Leopotam.Ecs.Hybrid {
 			ValidateComponentValues();
 			#endif
 
-			if (!hybridEntity.worldIsAlive || !hybridEntity.entityIsAlive || connected) return;
+			if (!hybridEntity.isAlive || connectedToEntity) return;
 
 			var entity = hybridEntity.entity;
 			AddToEntity(ref entity);

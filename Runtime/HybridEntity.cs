@@ -6,12 +6,15 @@ namespace Leopotam.Ecs.Hybrid {
 		public bool createEntityOnEnable = true;
 		public bool checkChildrenForComponents = true;
 
-		public bool worldIsAlive => startup && startup.worldIsAlive;
+		[Tooltip("You should to register NewHybridEntityEvent as OneFrame in any your EcsSystems before enable")]
+		public bool sendNewHybridEntityEvent = false;
+
 		private BaseStartup startup;
 
-		public EcsEntity entity => entityValue;
-		public bool entityIsAlive => !entityValue.IsNull() && entityValue.IsAlive();
+		public ref EcsEntity entity => ref entityValue;
 		private EcsEntity entityValue;
+
+		public bool isAlive => startup != null && startup.worldIsAlive && entityValue.IsAlive();
 
 		private void Awake() {
 			startup = GetStartup();
@@ -30,7 +33,7 @@ namespace Leopotam.Ecs.Hybrid {
 
 		public void AttachToEntity(EcsEntity parentEntity) {
 			#if DEBUG
-			if (!entity.IsNull()) {
+			if (!entityValue.IsNull()) {
 				throw new Exception($"{nameof(HybridEntity)} already attached to {nameof(EcsEntity)}");
 			}
 			#endif
@@ -55,8 +58,13 @@ namespace Leopotam.Ecs.Hybrid {
 			}
 			#endif
 
-			var newEntity = startup.world.NewEntityWith(out UnityObject unityObject, out NewHybridEntityEvent _);
+			var newEntity = startup.world.NewEntityWith(out UnityObject unityObject);
 			unityObject.transform = gameObject.transform;
+
+			if (sendNewHybridEntityEvent) {
+				newEntity.Set<NewHybridEntityEvent>();
+			}
+
 			return newEntity;
 		}
 
@@ -82,7 +90,7 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 
 		protected virtual void DestroyEntity() {
-			if (worldIsAlive && entityIsAlive) {
+			if (isAlive) {
 				entityValue.Destroy();
 			}
 
@@ -90,7 +98,7 @@ namespace Leopotam.Ecs.Hybrid {
 		}
 	}
 
-	public sealed class NewHybridEntityEvent : IEcsOneFrame { }
+	public sealed class NewHybridEntityEvent { }
 
 	public sealed class UnityObject : IEcsAutoReset {
 		public Transform transform;
