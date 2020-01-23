@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 namespace Leopotam.Ecs.Hybrid {
-	public sealed class Updated<T> : IEcsOneFrame, IEcsIgnoreInFilter { }
+	public sealed class Updated<T> : IEcsIgnoreInFilter { }
 
 	public static class EcsUpdatedExtensions {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -14,6 +14,11 @@ namespace Leopotam.Ecs.Hybrid {
 			#endif
 
 			entity.Set<Updated<T>>();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void RegisterUpdatedEventFor<T>(this EcsSystems systems) where T : class, new() {
+			systems.OneFrame<Updated<T>>();
 		}
 	}
 }
