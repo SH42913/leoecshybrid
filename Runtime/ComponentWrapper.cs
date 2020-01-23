@@ -32,4 +32,10 @@ namespace Leopotam.Ecs.Hybrid {
 			entity.MarkAsUpdated<T>();
 		}
 	}
+
+	public interface ICanCopyData<in T> where T : class {
+		void Copy(T other);
+	}
+
+	public sealed class WrappedComponentAttribute : PropertyAttribute { }
 }

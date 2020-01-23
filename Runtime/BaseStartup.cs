@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Leopotam.Ecs.Hybrid {
 	public abstract class BaseStartup : MonoBehaviour {

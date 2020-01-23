@@ -89,4 +89,14 @@ namespace Leopotam.Ecs.Hybrid {
 			entityValue = EcsEntity.Null;
 		}
 	}
+
+	public sealed class NewHybridEntityEvent : IEcsOneFrame { }
+
+	public sealed class UnityObject : IEcsAutoReset {
+		public GameObject gameObject;
+
+		public void Reset() {
+			gameObject = null;
+		}
+	}
 }
